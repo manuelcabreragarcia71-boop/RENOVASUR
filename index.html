@@ -71,31 +71,26 @@
         .fb { background: var(--facebook); } .ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
         .credits { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #333; font-size: 0.9rem; opacity: 0.8; }
 
-        /* --- BOTÓN ADMIN (MODO SUPER SEGURO) --- */
+        /* BOTÓN ADMIN */
         #btnAdminTrigger {
-            background-color: #333;
-            color: #aaa;
-            border: 1px solid #555;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-size: 14px;
-            z-index: 99999; /* Por encima de todo */
-            position: relative;
-            pointer-events: auto; /* Fuerza el click */
+            background-color: #333; color: #aaa; border: 1px solid #555; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 14px;
+            /* Asegura que esté por encima de todo */
+            position: relative; z-index: 2000;
         }
         #btnAdminTrigger:hover { background: #444; color: white; }
 
-        /* ELEMENTOS FLOTANTES */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100000; align-items: center; justify-content: center; }
-        .modal-inner { background: white; padding: 2rem; border-radius: 10px; width: 300px; text-align: center; position: relative; }
+        /* MODAL Y ADMIN BAR */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 99999; align-items: center; justify-content: center; }
+        .modal-inner { background: white; padding: 2rem; border-radius: 10px; width: 300px; text-align: center; }
         
-        .admin-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #222; color: white; padding: 10px 25px; border-radius: 50px; display: none; align-items: center; gap: 15px; z-index: 100000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .admin-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #222; color: white; padding: 10px 25px; border-radius: 50px; display: none; align-items: center; gap: 15px; z-index: 99999; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
         
+        /* ROBOT */
         .robot-container { position: fixed; bottom: 20px; right: 20px; z-index: 5000; display: flex; flex-direction: column; align-items: flex-end; }
-        .robot-icon { width: 70px; height: 70px; background: white; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .robot-icon { width: 70px; height: 70px; background: white; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: transform 0.2s; }
+        .robot-icon:active { transform: scale(0.95); }
         .chat-box { background: white; width: 300px; padding: 20px; border-radius: 10px; margin-bottom: 15px; display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        
         .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s infinite; margin-left: 10px; display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -106,12 +101,11 @@
 
     <header>
         <div class="header-container">
-            <div class="logo"><img src="logo.jpeg" alt="Renovasur" id="siteLogo"></div>
+            <div class="logo"><img src="logo.jpeg" alt="Renovasur" id="siteLogo" onerror="this.style.display='none'"></div>
             <nav>
                 <ul>
                     <li><a href="#inicio">Inicio</a></li>
                     <li><a href="#proyectos">Proyectos</a></li>
-                    <li><a href="#instagram-feed">Instagram</a></li>
                     <li><a href="#opiniones">Reseñas</a></li>
                 </ul>
             </nav>
@@ -133,18 +127,17 @@
             <p>Trabajos reales guardados en la nube.</p>
         </div>
         <div class="gallery-grid" id="galleryContainer">
-            <div class="gallery-item add-card" id="btnAddProject" onclick="document.getElementById('galleryUpload').click()">
+            <div class="gallery-item add-card" id="btnAddProject" onclick="abrirSelectorFoto()">
                 <i class="fas fa-plus-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
                 <span>SUBIR FOTO</span>
                 <div id="uploadSpinner" class="loading-spinner"></div>
             </div>
-            </div>
+        </div>
     </section>
 
     <section id="instagram-feed">
         <div class="section-title">
             <h2>Síguenos en Instagram</h2>
-            <p>Últimas novedades en tiempo real.</p>
         </div>
         <script src="https://elfsightcdn.com/platform.js" async></script>
         <div class="elfsight-app-71c07d67-afcc-4489-86c0-c5f19f110820" data-elfsight-app-lazy></div>
@@ -161,6 +154,7 @@
             <select id="reviewStars" class="form-input">
                 <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
                 <option value="4">⭐⭐⭐⭐ Muy Bien</option>
+                <option value="3">⭐⭐⭐ Normal</option>
             </select>
             <button onclick="guardarResenaSupabase()" class="btn-cta" style="width:100%;">
                 Publicar Reseña <div id="reviewSpinner" class="loading-spinner"></div>
@@ -172,27 +166,20 @@
         <div class="footer-content">
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p><i class="fas fa-map-marker-alt"></i> Sanlúcar de Barrameda</p>
-                <p><i class="fas fa-phone-alt"></i> 644 671 008</p>
-                <p><i class="fas fa-envelope"></i> info@renovasur.com</p>
+                <p>Sanlúcar de Barrameda</p>
+                <p>644 671 008</p>
             </div>
             <div class="footer-col">
-                <h4>Síguenos</h4>
+                <h4>Redes Sociales</h4>
                 <div class="social-row">
                     <a href="https://facebook.com" target="_blank" class="social-btn fb" id="btnFacebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://instagram.com" target="_blank" class="social-btn ig" id="btnInstagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
-            <div class="footer-col">
-                <h4>Horario</h4>
-                <p>L-V: 09:00 - 19:00</p>
-            </div>
         </div>
         
         <div class="credits">
-            <p>Renovasur &copy; 2024. Todos los derechos reservados.</p>
-            <p style="margin-top: 10px; font-weight: bold; color: var(--accent);">Web creada por movinetconde</p>
-            
+            <p>Renovasur &copy; 2024.</p>
             <br>
             <button id="btnAdminTrigger" onclick="abrirLogin()">🔒 Acceso Admin</button>
         </div>
@@ -228,113 +215,133 @@
     <input type="file" id="galleryUpload" accept="image/*" style="display:none;">
 
     <script>
-        // --- CONFIGURACIÓN ---
-        const SUPABASE_URL = 'https://qykzkxrpdsbojrnvdeai.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_wn8UY8Kdqr19nl5wgi7_pg_bWdD6tsq';
-        let supabase = null;
+        // ==========================================
+        // 1. VARIABLES GLOBALES (Siempre disponibles)
+        // ==========================================
+        let supabaseClient = null;
         let isAdmin = false;
 
-        // --- INICIALIZACIÓN ---
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Iniciar Supabase
-            if(window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                console.log("Sistema conectado");
-                cargarResenas();
-                cargarProyectos();
-            } else {
-                console.error("No se pudo cargar Supabase");
-            }
+        // --- DATOS DE CONEXIÓN ---
+        // ¡IMPORTANTE! Asegúrate de que estos datos son exactos a los de tu Supabase
+        const SUPABASE_URL = 'https://qykzkxrpdsbojrnvdeai.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_wn8UY8Kdqr19nl5wgi7_pg_bWdD6tsq'; // Nota: Esta clave parece cortada o extraña, revisa si es la correcta.
 
-            // 2. Cargar Links guardados
-            if(localStorage.getItem('fb_link')) document.getElementById('btnFacebook').href = localStorage.getItem('fb_link');
-            if(localStorage.getItem('ig_link')) document.getElementById('btnInstagram').href = localStorage.getItem('ig_link');
+        // ==========================================
+        // 2. FUNCIONES DE INTERFAZ (BOTONES Y CHAT)
+        // Estas funcionan aunque falle la base de datos
+        // ==========================================
 
-            // 3. Atajo de teclado (Tecla "L") para abrir login si el botón falla
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'l' || event.key === 'L') {
-                    // Solo si no estamos escribiendo en un input
-                    if(document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                        abrirLogin();
-                    }
-                }
-            });
-        });
-
-        // --- FUNCIONES ADMIN GLOBALES (WINDOW) ---
-        
-        window.abrirLogin = function() {
-            const modal = document.getElementById('loginModal');
-            modal.style.display = 'flex';
+        function abrirLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
             setTimeout(() => document.getElementById('pinInput').focus(), 100);
         }
 
-        window.cerrarLogin = function() {
+        function cerrarLogin() {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('pinInput').value = '';
         }
 
-        window.verificarPin = function() {
+        function verificarPin() {
             const pin = document.getElementById('pinInput').value;
-            // PIN: 4354
+            // PIN FIJO: 4354
             if(pin === "4354") {
-                window.activarAdmin();
-                window.cerrarLogin();
+                activarAdmin();
+                cerrarLogin();
             } else {
-                alert("PIN INCORRECTO. Inténtalo de nuevo.");
+                alert("PIN INCORRECTO");
                 document.getElementById('pinInput').value = '';
             }
         }
 
-        window.activarAdmin = function() {
+        function activarAdmin() {
             isAdmin = true;
             document.getElementById('adminBar').style.display = 'flex';
             document.getElementById('btnAddProject').style.display = 'flex';
-            document.getElementById('btnAdminTrigger').style.display = 'none'; // Ocultar botón login
+            document.getElementById('btnAdminTrigger').style.display = 'none';
             
-            // Mostrar botones borrar
+            // Mostrar botones borrar si ya hay proyectos cargados
             document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'block');
-
-            // Editar Links
-            editarLinks();
             
-            alert("✅ MODO ADMIN ACTIVO\n- Puedes subir fotos en 'Proyectos'.\n- Puedes borrar fotos con la 'X'.\n- Haz clic en los iconos de redes sociales para cambiar los enlaces.");
+            // Habilitar edición de links
+            habilitarEdicionLinks();
+            alert("✅ MODO ADMIN ACTIVO");
         }
 
-        window.salirAdmin = function() {
+        function salirAdmin() {
             isAdmin = false;
-            location.reload(); // Recargar para limpiar
+            location.reload();
         }
 
-        function editarLinks() {
+        function toggleChat() {
+            const box = document.getElementById('chatBox');
+            if (box.style.display === 'none' || box.style.display === '') {
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+        function sendWhatsapp() {
+            const msg = document.getElementById('chatInput').value;
+            if(msg) window.open(`https://wa.me/34644671008?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function abrirSelectorFoto() {
+            document.getElementById('galleryUpload').click();
+        }
+
+        function habilitarEdicionLinks() {
             document.getElementById('btnFacebook').onclick = function(e){ 
                 e.preventDefault(); 
-                let nuevoLink = prompt("Introduce el nuevo enlace de Facebook:", this.href); 
-                if(nuevoLink) { 
-                    this.href = nuevoLink; 
-                    localStorage.setItem('fb_link', nuevoLink);
-                } 
+                let nuevoLink = prompt("Nuevo enlace Facebook:", this.href); 
+                if(nuevoLink) { this.href = nuevoLink; localStorage.setItem('fb_link', nuevoLink); } 
             };
             document.getElementById('btnInstagram').onclick = function(e){ 
                 e.preventDefault(); 
-                let nuevoLink = prompt("Introduce el nuevo enlace de Instagram:", this.href); 
-                if(nuevoLink) { 
-                    this.href = nuevoLink; 
-                    localStorage.setItem('ig_link', nuevoLink);
-                } 
+                let nuevoLink = prompt("Nuevo enlace Instagram:", this.href); 
+                if(nuevoLink) { this.href = nuevoLink; localStorage.setItem('ig_link', nuevoLink); } 
             };
         }
 
-        // --- FUNCIONES SUPABASE (BASE DE DATOS) ---
+        // ==========================================
+        // 3. INICIALIZACIÓN Y BASE DE DATOS
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar Links guardados
+            if(localStorage.getItem('fb_link')) document.getElementById('btnFacebook').href = localStorage.getItem('fb_link');
+            if(localStorage.getItem('ig_link')) document.getElementById('btnInstagram').href = localStorage.getItem('ig_link');
+
+            // INTENTAR CONECTAR A SUPABASE
+            try {
+                if(window.supabase) {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log("Supabase inicializado correctamente.");
+                    cargarResenas();
+                    cargarProyectos();
+                } else {
+                    console.error("La librería de Supabase no cargó.");
+                }
+            } catch (error) {
+                console.error("Error crítico iniciando Supabase:", error);
+                // No mostramos alerta al usuario para no asustar, pero miramos la consola
+            }
+
+            // Listener para subida de fotos
+            document.getElementById('galleryUpload').addEventListener('change', subirFoto);
+        });
+
+        // --- FUNCIONES DB ---
 
         async function cargarResenas() {
-            if(!supabase) return;
-            const { data } = await supabase.from('resenas').select('*').order('created_at', { ascending: false });
+            if(!supabaseClient) return;
+            const { data, error } = await supabaseClient.from('resenas').select('*').order('created_at', { ascending: false });
+            
             if(data) {
                 const container = document.getElementById('reviewsContainer');
                 container.innerHTML = '';
                 data.forEach(r => {
-                    let estrellas = '⭐'.repeat(r.estrellas);
+                    let estrellas = '⭐'.repeat(r.estrellas || 5);
                     container.insertAdjacentHTML('beforeend', 
                         `<div class="review-card">
                             <div class="stars">${estrellas}</div>
@@ -346,35 +353,39 @@
             }
         }
 
-        window.guardarResenaSupabase = async function() {
-            if(!supabase) return alert("Error de conexión");
+        async function guardarResenaSupabase() {
+            if(!supabaseClient) return alert("Error: No hay conexión con la base de datos.");
+            
             const nombre = document.getElementById('reviewName').value;
             const texto = document.getElementById('reviewText').value;
             const estrellas = document.getElementById('reviewStars').value;
 
-            if(!nombre || !texto) return alert("Por favor completa todos los campos");
+            if(!nombre || !texto) return alert("Completa los campos.");
 
             document.getElementById('reviewSpinner').style.display='inline-block';
-            const { error } = await supabase.from('resenas').insert([{ nombre, texto, estrellas }]);
+            
+            const { error } = await supabaseClient.from('resenas').insert([{ nombre, texto, estrellas }]);
+            
             document.getElementById('reviewSpinner').style.display='none';
 
             if(!error) {
-                alert("Reseña publicada con éxito");
+                alert("¡Reseña guardada!");
                 document.getElementById('reviewName').value=''; 
                 document.getElementById('reviewText').value='';
                 cargarResenas();
             } else {
-                alert("Error al guardar");
+                alert("Error al guardar: " + error.message);
             }
         }
 
         async function cargarProyectos() {
-            if(!supabase) return;
-            const { data } = await supabase.from('proyectos').select('*').order('created_at', { ascending: false });
+            if(!supabaseClient) return;
+            const { data, error } = await supabaseClient.from('proyectos').select('*').order('created_at', { ascending: false });
             
             const container = document.getElementById('galleryContainer');
-            // Limpiamos todo MENOS el botón de añadir
             const btnAdd = document.getElementById('btnAddProject');
+            
+            // Limpiamos contenido pero guardamos el botón
             container.innerHTML = '';
             container.appendChild(btnAdd);
 
@@ -391,40 +402,36 @@
             }
         }
 
-        // Subida de imagen
-        document.getElementById('galleryUpload').addEventListener('change', async function(e) {
+        async function subirFoto(e) {
+            if(!supabaseClient) return alert("Sin conexión a base de datos");
             const file = e.target.files[0];
             if(!file) return;
-            if(file.size > 2000000) return alert("La imagen es muy pesada (Máx 2MB)");
+
+            // Limite 1MB para evitar saturar versiones gratuitas
+            if(file.size > 1000000) return alert("Imagen demasiado grande. Usa una menor a 1MB.");
 
             const reader = new FileReader();
             reader.onload = async function(ev) {
                 document.getElementById('uploadSpinner').style.display='inline-block';
-                const { error } = await supabase.from('proyectos').insert([{ imagen_base64: ev.target.result }]);
+                const { error } = await supabaseClient.from('proyectos').insert([{ imagen_base64: ev.target.result }]);
                 document.getElementById('uploadSpinner').style.display='none';
                 
-                if(!error) cargarProyectos();
-                else alert("Error al subir imagen");
+                if(!error) {
+                    cargarProyectos();
+                } else {
+                    alert("Error subiendo: " + error.message);
+                }
             };
             reader.readAsDataURL(file);
-        });
+        }
 
+        // Esta función debe estar disponible globalmente para el onclick del HTML generado dinámicamente
         window.borrarProyecto = async function(id) {
-            if(confirm("¿Seguro que quieres borrar esta foto?")) {
-                await supabase.from('proyectos').delete().eq('id', id);
+            if(!supabaseClient) return;
+            if(confirm("¿Borrar esta foto?")) {
+                await supabaseClient.from('proyectos').delete().eq('id', id);
                 cargarProyectos();
             }
-        }
-
-        // --- FUNCIONES CHAT ---
-        window.toggleChat = function() {
-            const box = document.getElementById('chatBox');
-            box.style.display = box.style.display === 'block' ? 'none' : 'block';
-        }
-
-        window.sendWhatsapp = function() {
-            const msg = document.getElementById('chatInput').value;
-            if(msg) window.open(`https://wa.me/34644671008?text=${encodeURIComponent(msg)}`, '_blank');
         }
     </script>
 </body>
