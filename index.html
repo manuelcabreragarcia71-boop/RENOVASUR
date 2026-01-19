@@ -1,0 +1,390 @@
+¡Fantástico! Ya tienes el código del widget ("El motor" que hace que Instagram se vea en la web).
+
+He cogido el código que me acabas de mandar y lo he integrado en tu página, sustituyendo el "hueco" que habíamos dejado antes.
+
+**¿Qué va a pasar ahora?**
+
+1. En la sección de Instagram, **ahora se cargarán tus fotos reales** automáticamente gracias al código de Elfsight que me has pasado.
+2. El **Modo Admin** sigue protegido para que funcione siempre.
+3. La base de datos sigue conectada para los Proyectos y Reseñas.
+
+Aquí tienes el código **FINAL y COMPLETO**. Copia y pega todo esto:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renovasur - Energía Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* --- ESTILOS VISUALES --- */
+        :root {
+            --primary: #003366;      /* Azul Corporativo */
+            --accent: #28a745;       /* Verde Energía */
+            --white-glass: rgba(255, 255, 255, 0.96);
+            --text-dark: #333;
+            --facebook: #1877F2;
+            --instagram: #E1306C;
+        }
+
+        body {
+            background: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed; 
+            background-size: cover; color: var(--text-dark); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 0;
+        }
+
+        * { box-sizing: border-box; } a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; padding: 0; margin: 0; }
+
+        /* HEADER */
+        header { background: rgba(255, 255, 255, 0.98); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 5%; max-width: 1200px; margin: 0 auto; }
+        .logo img { height: 60px; width: auto; display: block; }
+        nav ul { display: flex; gap: 2rem; }
+        nav a { font-weight: 600; color: var(--primary); text-transform: uppercase; font-size: 0.9rem; }
+        .btn-cta { background: var(--accent); color: white; padding: 0.6rem 1.5rem; border-radius: 4px; font-weight: bold; }
+
+        /* SECCIONES */
+        .hero-spacer { height: 80px; }
+        .hero-section { text-align: center; padding: 8rem 2rem; background: rgba(0, 51, 102, 0.9); color: white; margin-bottom: 4rem; }
+        .hero-section h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+        
+        section { background: var(--white-glass); margin: 4rem auto; padding: 4rem 5%; max-width: 1100px; border-radius: 15px; backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { color: var(--primary); font-size: 2.2rem; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: var(--accent); margin: 10px auto; }
+
+        /* GALERÍA */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .gallery-item { height: 250px; position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .add-card { border: 3px dashed var(--accent); background: rgba(40,167,69,0.1); display: none; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; color: var(--primary); font-weight: bold; }
+        .delete-btn { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; font-weight: bold; }
+
+        /* RESEÑAS */
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .review-card { background: white; padding: 1.5rem; border-radius: 8px; border-left: 5px solid var(--accent); }
+        .stars { color: #FFD700; margin-bottom: 10px; }
+        .review-form { background: #f4f4f4; padding: 2rem; border-radius: 10px; max-width: 600px; margin: 0 auto; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 1rem; }
+
+        /* FOOTER */
+        footer { background: #1a1a1a; color: #ddd; padding: 4rem 5% 1rem; margin-top: 4rem; position: relative; z-index: 10; }
+        .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; gap: 2rem; }
+        .footer-col h4 { color: white; border-left: 3px solid var(--accent); padding-left: 10px; margin-bottom: 1.5rem; }
+        
+        .social-row { display: flex; gap: 15px; margin-top: 15px; }
+        .social-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; transition: transform 0.3s; }
+        .social-btn:hover { transform: translateY(-5px); }
+        .fb { background: var(--facebook); } .ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .credits { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #333; font-size: 0.9rem; opacity: 0.7; }
+
+        /* BOTÓN ADMIN FLOTANTE (ESTILO NUEVO PARA QUE NO FALLE) */
+        .admin-trigger {
+            display: inline-block; margin-top: 20px; padding: 5px 10px; border: 1px solid #444; border-radius: 4px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .admin-trigger:hover { background: #333; color: white; }
+
+        /* MODALES Y ADMIN */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; }
+        .modal-inner { background: white; padding: 2rem; border-radius: 10px; width: 300px; text-align: center; }
+        .admin-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #222; color: white; padding: 10px 25px; border-radius: 50px; display: none; align-items: center; gap: 15px; z-index: 9999; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .editable-active { border: 2px dashed var(--accent); background: rgba(40, 255, 100, 0.1); cursor: text; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s infinite; margin-left: 10px; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ROBOT */
+        .robot-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; }
+        .robot-icon { width: 70px; height: 70px; background: white; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .chat-box { background: white; width: 300px; padding: 20px; border-radius: 10px; margin-bottom: 15px; display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+
+        @media(max-width:768px) { nav { display: none; } .hero-section h1 { font-size: 2.5rem; } }
+    </style>
+</head>
+<body>
+
+    <script>
+        // Funciones Globales de Admin (Definidas antes que nada)
+        function openLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        function checkPin() {
+            const input = document.getElementById('pinInput').value;
+            // PIN: 4354 (Codificado en Base64 para ocultarlo)
+            if(btoa(input) === "NDM1NA==") {
+                activarAdmin();
+                closeLogin();
+            } else {
+                alert("PIN Incorrecto");
+            }
+        }
+    </script>
+
+    <header>
+        <div class="header-container">
+            <div class="logo"><img src="logo.jpeg" alt="Renovasur" id="siteLogo"></div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#proyectos">Proyectos</a></li>
+                    <li><a href="#instagram-feed">Instagram</a></li>
+                    <li><a href="#opiniones">Reseñas</a></li>
+                </ul>
+            </nav>
+            <a href="https://wa.me/34644671008" class="btn-cta"><i class="fab fa-whatsapp"></i> 644 671 008</a>
+        </div>
+    </header>
+
+    <div class="hero-spacer"></div>
+
+    <div class="hero-section" id="inicio">
+        <h1>Energía Limpia, Futuro Seguro</h1>
+        <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto 2rem;">Líderes en instalación de placas solares y eficiencia energética.</p>
+        <a href="#contacto" class="btn-cta" style="background:white; color:var(--primary);">Solicitar Estudio</a>
+    </div>
+
+    <section id="proyectos">
+        <div class="section-title">
+            <h2>Nuestros Proyectos</h2>
+            <p>Trabajos reales guardados en la nube.</p>
+        </div>
+        <div class="gallery-grid" id="galleryContainer">
+            <div class="gallery-item add-card" id="btnAddProject" onclick="document.getElementById('galleryUpload').click()">
+                <i class="fas fa-plus-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                <span>SUBIR FOTO</span>
+                <div id="uploadSpinner" class="loading-spinner"></div>
+            </div>
+            </div>
+    </section>
+
+    <section id="instagram-feed">
+        <div class="section-title">
+            <h2>Síguenos en Instagram</h2>
+            <p>Últimas novedades en tiempo real.</p>
+        </div>
+        
+        <script src="https://elfsightcdn.com/platform.js" async></script>
+        <div class="elfsight-app-71c07d67-afcc-4489-86c0-c5f19f110820" data-elfsight-app-lazy></div>
+        </section>
+
+    <section id="opiniones">
+        <div class="section-title"><h2>Opiniones de Clientes</h2></div>
+        <div class="reviews-grid" id="reviewsContainer"></div>
+        
+        <div class="review-form">
+            <h3 style="margin-bottom:1rem;">Deja tu opinión</h3>
+            <input type="text" id="reviewName" class="form-input" placeholder="Tu Nombre">
+            <textarea id="reviewText" class="form-input" rows="3" placeholder="Tu experiencia..."></textarea>
+            <select id="reviewStars" class="form-input">
+                <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                <option value="4">⭐⭐⭐⭐ Muy Bien</option>
+            </select>
+            <button onclick="guardarResenaSupabase()" class="btn-cta" style="width:100%; border:none; cursor:pointer;">
+                Publicar Reseña <div id="reviewSpinner" class="loading-spinner"></div>
+            </button>
+        </div>
+    </section>
+
+    <footer id="contacto">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Sanlúcar de Barrameda</p>
+                <p><i class="fas fa-phone-alt"></i> 644 671 008</p>
+                <p><i class="fas fa-envelope"></i> info@renovasur.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Síguenos</h4>
+                <div class="social-row">
+                    <a href="https://facebook.com" target="_blank" class="social-btn fb" id="btnFacebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="social-btn ig" id="btnInstagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Horario</h4>
+                <p>L-V: 09:00 - 19:00</p>
+            </div>
+        </div>
+        <div class="credits">
+            <p>Renovasur &copy; 2024. Todos los derechos reservados.</p>
+            <p style="margin-top: 10px; font-weight: bold; color: var(--accent);">Web creada por movinetconde</p>
+            
+            <div class="admin-trigger" onclick="openLogin()">🔒 Acceso Admin</div>
+        </div>
+    </footer>
+
+    <div class="robot-container">
+        <div class="chat-box" id="chatBox">
+            <p>🤖 <strong>Asistente Renovasur</strong></p>
+            <p style="font-size:0.9rem; margin:10px 0;">¿Dudas? Escríbenos.</p>
+            <input type="text" id="chatInput" style="width:100%; padding:8px; border:1px solid #ccc; margin-bottom:10px;" placeholder="Tu consulta...">
+            <button onclick="sendWhatsapp()" style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">Enviar WhatsApp</button>
+        </div>
+        <div class="robot-icon" onclick="document.getElementById('chatBox').style.display = document.getElementById('chatBox').style.display === 'block' ? 'none' : 'block'">
+            <i class="fas fa-robot"></i>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-inner">
+            <h3>Área Privada</h3>
+            <p>Introduce PIN</p>
+            <input type="password" id="pinInput" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ddd;">
+            <button onclick="checkPin()" class="btn-cta" style="width:100%;">Entrar</button>
+            <div style="margin-top:15px; cursor:pointer; text-decoration:underline;" onclick="closeLogin()">Cancelar</div>
+        </div>
+    </div>
+
+    <div id="adminBar" class="admin-bar">
+        <span>🔧 MODO EDICIÓN</span>
+        <button onclick="exitAdmin()" style="background:#dc3545; border:none; padding:8px 20px; border-radius:20px; color:white; cursor:pointer;">Salir</button>
+    </div>
+
+    <input type="file" id="galleryUpload" accept="image/*" style="display:none;">
+
+    <script>
+        // CONFIGURACIÓN SUPABASE
+        const SUPABASE_URL = 'https://qykzkxrpdsbojrnvdeai.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_wn8UY8Kdqr19nl5wgi7_pg_bWdD6tsq';
+        
+        let supabase = null;
+        let isAdmin = false;
+
+        // INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if(window.supabase) {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log("Supabase Online");
+                    cargarResenas();
+                    cargarProyectos();
+                } else {
+                    console.log("Supabase Offline");
+                }
+            } catch(e) { console.error(e); }
+
+            // Cargar links guardados
+            if(localStorage.getItem('fb_link')) document.getElementById('btnFacebook').href = localStorage.getItem('fb_link');
+            if(localStorage.getItem('ig_link')) document.getElementById('btnInstagram').href = localStorage.getItem('ig_link');
+        });
+
+        // FUNCIONES ADMIN (ACTIVACIÓN)
+        function activarAdmin() {
+            isAdmin = true;
+            document.getElementById('adminBar').style.display = 'flex';
+            document.getElementById('btnAddProject').style.display = 'flex';
+            
+            // Mostrar botones de borrar
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            deleteBtns.forEach(btn => btn.style.display = 'block');
+
+            // Habilitar edición de links
+            document.getElementById('btnFacebook').onclick = function(e){ e.preventDefault(); let u=prompt("Nuevo Link Facebook:",this.href); if(u){this.href=u; localStorage.setItem('fb_link',u);} };
+            document.getElementById('btnInstagram').onclick = function(e){ e.preventDefault(); let u=prompt("Nuevo Link Instagram:",this.href); if(u){this.href=u; localStorage.setItem('ig_link',u);} };
+
+            alert("MODO ADMIN ACTIVO\n- Sube fotos en Proyectos.\n- Clic en los iconos de redes para cambiar enlace.");
+        }
+
+        function exitAdmin() {
+            isAdmin = false;
+            document.getElementById('adminBar').style.display = 'none';
+            document.getElementById('btnAddProject').style.display = 'none';
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            deleteBtns.forEach(btn => btn.style.display = 'none');
+            
+            // Desactivar edición links
+            document.getElementById('btnFacebook').onclick = null;
+            document.getElementById('btnInstagram').onclick = null;
+        }
+
+        // FUNCIONES BASE DE DATOS
+        async function cargarResenas() {
+            if(!supabase) return;
+            const { data } = await supabase.from('resenas').select('*').order('created_at', { ascending: false });
+            if(data) {
+                const c = document.getElementById('reviewsContainer');
+                c.innerHTML = '';
+                data.forEach(r => {
+                    let s = ''; for(let i=0;i<r.estrellas;i++) s+='<i class="fas fa-star"></i>';
+                    c.insertAdjacentHTML('beforeend', `<div class="review-card"><div class="stars">${s}</div><p>"${r.texto}"</p><h5 style="margin-top:10px; color:var(--primary);">— ${r.nombre}</h5></div>`);
+                });
+            }
+        }
+
+        async function guardarResenaSupabase() {
+            if(!supabase) return alert("Base de datos desconectada.");
+            const n = document.getElementById('reviewName').value;
+            const t = document.getElementById('reviewText').value;
+            const s = document.getElementById('reviewStars').value;
+            if(!n || !t) return alert("Faltan datos");
+
+            document.getElementById('reviewSpinner').style.display='inline-block';
+            const { error } = await supabase.from('resenas').insert([{ nombre:n, texto:t, estrellas:s }]);
+            document.getElementById('reviewSpinner').style.display='none';
+            
+            if(!error) {
+                alert("Reseña publicada");
+                document.getElementById('reviewName').value=''; 
+                document.getElementById('reviewText').value='';
+                cargarResenas();
+            } else { alert("Error al guardar"); }
+        }
+
+        async function cargarProyectos() {
+            if(!supabase) return;
+            const { data } = await supabase.from('proyectos').select('*').order('created_at', { ascending: false });
+            if(data) {
+                const c = document.getElementById('galleryContainer');
+                // Limpiar todo menos el botón add
+                document.querySelectorAll('.gallery-item:not(.add-card)').forEach(e => e.remove());
+                data.forEach(p => {
+                    const d = document.createElement('div'); d.className='gallery-item';
+                    d.innerHTML = `<img src="${p.imagen_base64}"><button class="delete-btn" onclick="borrarProyecto(${p.id})">X</button>`;
+                    c.appendChild(d);
+                });
+                if(isAdmin) document.querySelectorAll('.delete-btn').forEach(b => b.style.display='block');
+            }
+        }
+
+        document.getElementById('galleryUpload').addEventListener('change', async function(e) {
+            if(!supabase) return alert("Base de datos desconectada.");
+            const f = e.target.files[0];
+            if(f) {
+                if(f.size > 2000000) return alert("Imagen muy grande (Máx 2MB)");
+                const r = new FileReader();
+                r.onload = async function(ev) {
+                    document.getElementById('uploadSpinner').style.display='inline-block';
+                    const { error } = await supabase.from('proyectos').insert([{ imagen_base64: ev.target.result }]);
+                    document.getElementById('uploadSpinner').style.display='none';
+                    if(!error) cargarProyectos();
+                    else alert("Error al subir");
+                };
+                r.readAsDataURL(f);
+            }
+        });
+
+        async function borrarProyecto(id) {
+            if(confirm("¿Borrar foto?")) {
+                await supabase.from('proyectos').delete().eq('id', id);
+                cargarProyectos();
+            }
+        }
+
+        // ROBOT WHATSAPP
+        function sendWhatsapp() {
+            const t = document.getElementById('chatInput').value;
+            if(t) window.open(`https://wa.me/34644671008?text=${encodeURIComponent(t)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
+
+```
