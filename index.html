@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renovasur - Energía Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* --- ESTILOS VISUALES --- */
+        :root {
+            --primary: #003366;      /* Azul Corporativo */
+            --accent: #28a745;       /* Verde Energía */
+            --white-glass: rgba(255, 255, 255, 0.96);
+            --shadow: 0 10px 30px rgba(0,0,0,0.15);
+            --text-dark: #333;
+            --facebook: #1877F2;
+            --instagram: #E1306C;
+        }
+
+        body {
+            background: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed; 
+            background-size: cover;
+            color: var(--text-dark);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0; padding: 0;
+        }
+
+        * { box-sizing: border-box; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; padding: 0; margin: 0; }
+
+        /* HEADER */
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-container {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.8rem 5%; max-width: 1200px; margin: 0 auto;
+        }
+        .logo img { height: 60px; width: auto; display: block; }
+        
+        nav ul { display: flex; gap: 2rem; }
+        nav a { font-weight: 600; color: var(--primary); text-transform: uppercase; font-size: 0.9rem; }
+        nav a:hover { color: var(--accent); }
+        
+        .btn-cta {
+            background: var(--accent); color: white; padding: 0.6rem 1.5rem; border-radius: 4px; font-weight: bold;
+        }
+        .btn-cta:hover { background: #218838; transform: translateY(-2px); }
+
+        /* SECCIONES */
+        .hero-spacer { height: 80px; }
+        
+        .hero-section {
+            text-align: center; padding: 8rem 2rem;
+            background: rgba(0, 51, 102, 0.9); color: white;
+            margin-bottom: 4rem;
+        }
+        .hero-section h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+
+        section {
+            background: var(--white-glass);
+            margin: 4rem auto; padding: 4rem 5%; max-width: 1100px;
+            border-radius: 15px; box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+        }
+
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { color: var(--primary); font-size: 2.2rem; margin-bottom: 10px; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: var(--accent); margin: 10px auto; }
+
+        /* GALERÍA */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .gallery-item { height: 250px; position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .delete-btn { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; font-weight: bold; z-index: 10; }
+        .add-card { border: 3px dashed var(--accent); background: rgba(40,167,69,0.1); display: none; align-items: center; justify-content: center; flex-direction: column; cursor: pointer; color: var(--primary); font-weight: bold; }
+
+        /* RESEÑAS */
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .review-card { background: white; padding: 1.5rem; border-radius: 8px; border-left: 5px solid var(--accent); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stars { color: #FFD700; margin-bottom: 10px; }
+        .review-form { background: #f4f4f4; padding: 2rem; border-radius: 10px; max-width: 600px; margin: 0 auto; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 1rem; }
+
+        /* FOOTER */
+        footer { background: #1a1a1a; color: #ddd; padding: 4rem 5% 1rem; margin-top: 4rem; }
+        .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; gap: 2rem; }
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h4 { color: white; border-left: 3px solid var(--accent); padding-left: 10px; margin-bottom: 1.5rem; font-size: 1.2rem; }
+        .footer-col p { margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        .footer-col i { color: var(--accent); width: 20px; }
+        
+        .social-row { display: flex; gap: 15px; margin-top: 15px; }
+        .social-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; transition: transform 0.3s; }
+        .social-btn:hover { transform: translateY(-5px); }
+        .fb { background: var(--facebook); }
+        .ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+
+        .credits { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #333; font-size: 0.9rem; opacity: 0.7; }
+        
+        /* ADMIN & ROBOT */
+        .robot-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; align-items: flex-end; }
+        .robot-icon { width: 70px; height: 70px; background: white; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .chat-box { background: white; width: 300px; padding: 20px; border-radius: 10px; margin-bottom: 15px; display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+
+        .admin-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #222; color: white; padding: 10px 25px; border-radius: 50px; display: none; align-items: center; gap: 15px; z-index: 2000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; align-items: center; justify-content: center; }
+        .modal-inner { background: white; padding: 2rem; border-radius: 10px; width: 300px; text-align: center; }
+        
+        .editable-active { border: 2px dashed var(--accent); background: rgba(40, 255, 100, 0.1); cursor: text; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s infinite; margin-left: 10px; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media(max-width:768px) { nav { display: none; } .hero-section h1 { font-size: 2.5rem; } .footer-content { flex-direction: column; gap: 2rem; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo"><img src="logo.jpeg" alt="Renovasur" id="siteLogo"></div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#proyectos">Proyectos</a></li>
+                    <li><a href="#opiniones">Reseñas</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+            <a href="https://wa.me/34644671008" class="btn-cta"><i class="fab fa-whatsapp"></i> 644 671 008</a>
+        </div>
+    </header>
+
+    <div class="hero-spacer"></div>
+
+    <div class="hero-section" id="inicio">
+        <h1>Energía Limpia, Futuro Seguro</h1>
+        <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto 2rem;">Líderes en instalación de placas solares y eficiencia energética.</p>
+        <a href="#contacto" class="btn-cta" style="background:white; color:var(--primary);">Solicitar Estudio</a>
+    </div>
+
+    <section id="proyectos">
+        <div class="section-title">
+            <h2>Nuestros Proyectos</h2>
+            <p>Trabajos reales guardados en la nube.</p>
+        </div>
+        <div class="gallery-grid" id="galleryContainer">
+            <div class="gallery-item add-card" id="btnAddProject" onclick="document.getElementById('galleryUpload').click()">
+                <i class="fas fa-plus-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                <span>SUBIR FOTO</span>
+                <div id="uploadSpinner" class="loading-spinner"></div>
+            </div>
+            </div>
+    </section>
+
+    <section id="opiniones">
+        <div class="section-title"><h2>Lo que dicen nuestros clientes</h2></div>
+        <div class="reviews-grid" id="reviewsContainer">
+            </div>
+        
+        <div class="review-form">
+            <h3 style="margin-bottom:1rem;">Deja tu opinión</h3>
+            <input type="text" id="reviewName" class="form-input" placeholder="Tu Nombre">
+            <textarea id="reviewText" class="form-input" rows="3" placeholder="Tu experiencia..."></textarea>
+            <select id="reviewStars" class="form-input">
+                <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                <option value="4">⭐⭐⭐⭐ Muy Bien</option>
+                <option value="3">⭐⭐⭐ Bien</option>
+            </select>
+            <button onclick="guardarResenaSupabase()" class="btn-cta" style="width:100%; border:none; cursor:pointer;">
+                Publicar Reseña <div id="reviewSpinner" class="loading-spinner"></div>
+            </button>
+        </div>
+    </section>
+
+    <footer id="contacto">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Sanlúcar de Barrameda</p>
+                <p><i class="fas fa-phone-alt"></i> 644 671 008</p>
+                <p><i class="fas fa-envelope"></i> info@renovasur.com</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Síguenos</h4>
+                <p>Nuestras últimas instalaciones en:</p>
+                <div class="social-row">
+                    <a href="https://facebook.com" target="_blank" class="social-btn fb" id="btnFacebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="social-btn ig" id="btnInstagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Horario</h4>
+                <p><i class="far fa-clock"></i> Lunes - Viernes</p>
+                <p style="padding-left:30px; font-weight:bold;">09:00 - 19:00</p>
+                <p><i class="far fa-clock"></i> Sábados</p>
+                <p style="padding-left:30px; font-weight:bold;">10:00 - 14:00</p>
+            </div>
+        </div>
+
+        <div class="credits">
+            <p>Renovasur &copy; 2024. Todos los derechos reservados.</p>
+            <p style="margin-top: 10px; font-weight: bold; color: var(--accent);">Web creada por movinetconde</p>
+            <div style="margin-top:20px; opacity:0.3; cursor:pointer;" onclick="openLogin()">🔒 Admin</div>
+        </div>
+    </footer>
+
+    <div class="robot-container">
+        <div class="chat-box" id="chatBox">
+            <p>🤖 <strong>Asistente Renovasur</strong></p>
+            <p style="font-size:0.9rem; margin:10px 0;">¿Tienes dudas? Te respondemos al instante por WhatsApp.</p>
+            <input type="text" id="chatInput" style="width:100%; padding:8px; border:1px solid #ccc; margin-bottom:10px; border-radius:5px;" placeholder="Escribe tu consulta...">
+            <button onclick="sendWhatsapp()" style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">Enviar a WhatsApp</button>
+        </div>
+        <div class="robot-icon" onclick="document.getElementById('chatBox').style.display = document.getElementById('chatBox').style.display === 'block' ? 'none' : 'block'">
+            <i class="fas fa-robot"></i>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-inner">
+            <h3>Área Privada</h3>
+            <p>Introduce tu PIN</p>
+            <input type="password" id="pinInput" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ddd;">
+            <button onclick="checkPin()" class="btn-cta" style="width:100%;">Entrar</button>
+            <p id="dbStatus" style="font-size:0.8rem; color:orange; margin-top:10px; display:none;"></p>
+            <div style="margin-top:15px; cursor:pointer; text-decoration:underline;" onclick="document.getElementById('loginModal').style.display='none'">Cancelar</div>
+        </div>
+    </div>
+
+    <div id="adminBar" class="admin-bar">
+        <span>🔧 MODO EDICIÓN</span>
+        <button onclick="exitAdmin()" style="background:#dc3545; border:none; padding:8px 20px; border-radius:20px; color:white; cursor:pointer;">Salir y Guardar</button>
+    </div>
+
+    <input type="file" id="galleryUpload" accept="image/*" style="display:none;">
+
+    <script>
+        // --- 1. CONFIGURACIÓN E INICIALIZACIÓN ---
+        const SUPABASE_URL = 'https://qykzkxrpdsbojrnvdeai.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_wn8UY8Kdqr19nl5wgi7_pg_bWdD6tsq';
+        const SECRET_HASH = "NDM1NA=="; // PIN 4354
+        
+        let supabase = null;
+        let isAdmin = false;
+
+        // INICIALIZACIÓN SEGURA DE SUPABASE
+        // Esto evita que "no funcione nada" si falla el script externo
+        window.onload = function() {
+            try {
+                if (window.supabase) {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log("Supabase conectado correctamente.");
+                    cargarResenas();
+                    cargarProyectos();
+                } else {
+                    console.warn("Librería Supabase no cargada. Modo Offline.");
+                }
+            } catch (e) {
+                console.error("Error inicializando Supabase:", e);
+            }
+            
+            // Cargar links guardados de redes sociales
+            if(localStorage.getItem('fb_link')) document.getElementById('btnFacebook').href = localStorage.getItem('fb_link');
+            if(localStorage.getItem('ig_link')) document.getElementById('btnInstagram').href = localStorage.getItem('ig_link');
+        };
+
+        // --- 2. FUNCIONES DATABASE (Reseñas) ---
+        async function cargarResenas() {
+            if(!supabase) return;
+            const { data, error } = await supabase.from('resenas').select('*').order('created_at', { ascending: false });
+            if (data) {
+                const container = document.getElementById('reviewsContainer');
+                container.innerHTML = '';
+                data.forEach(r => {
+                    let stars = '';
+                    for(let i=0; i<r.estrellas; i++) stars += '<i class="fas fa-star"></i>';
+                    container.insertAdjacentHTML('beforeend', 
+                        `<div class="review-card"><div class="stars">${stars}</div><p>"${r.texto}"</p><h5 style="margin-top:10px; color:var(--primary);">— ${r.nombre}</h5></div>`
+                    );
+                });
+            }
+        }
+
+        async function guardarResenaSupabase() {
+            if(!supabase) return alert("Error: No hay conexión con la base de datos.");
+            const nombre = document.getElementById('reviewName').value;
+            const texto = document.getElementById('reviewText').value;
+            const estrellas = document.getElementById('reviewStars').value;
+
+            if(!nombre || !texto) return alert("Rellena todos los campos");
+
+            document.getElementById('reviewSpinner').style.display = 'inline-block';
+            const { error } = await supabase.from('resenas').insert([{ nombre, texto, estrellas }]);
+            document.getElementById('reviewSpinner').style.display = 'none';
+
+            if(!error) {
+                alert("Reseña publicada");
+                document.getElementById('reviewName').value=''; 
+                document.getElementById('reviewText').value='';
+                cargarResenas();
+            } else {
+                alert("Error al guardar: " + error.message);
+            }
+        }
+
+        // --- 3. FUNCIONES DATABASE (Proyectos) ---
+        async function cargarProyectos() {
+            if(!supabase) return;
+            const { data, error } = await supabase.from('proyectos').select('*').order('created_at', { ascending: false });
+            if (data) {
+                const container = document.getElementById('galleryContainer');
+                // Limpiar todo menos el botón de añadir
+                document.querySelectorAll('.gallery-item:not(.add-card)').forEach(e => e.remove());
+                
+                data.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'gallery-item';
+                    div.innerHTML = `<img src="${p.imagen_base64}"><button class="delete-btn" onclick="borrarProyecto(${p.id})">X</button>`;
+                    container.appendChild(div);
+                });
+                if(isAdmin) document.querySelectorAll('.delete-btn').forEach(b => b.style.display='block');
+            }
+        }
+
+        // Subir foto
+        document.getElementById('galleryUpload').addEventListener('change', async function(e) {
+            if(!supabase) return alert("Sin conexión a base de datos.");
+            const file = e.target.files[0];
+            if(file) {
+                // Reducir un poco la calidad o tamaño si es posible, aquí limitamos por tamaño bruto
+                if(file.size > 3000000) return alert("Imagen demasiado grande (Máx 3MB)");
+                
+                const reader = new FileReader();
+                reader.onload = async function(evt) {
+                    document.getElementById('uploadSpinner').style.display = 'inline-block';
+                    const { error } = await supabase.from('proyectos').insert([{ imagen_base64: evt.target.result }]);
+                    document.getElementById('uploadSpinner').style.display = 'none';
+                    if(!error) {
+                        alert("Foto subida correctamente");
+                        cargarProyectos();
+                    }
+                    else alert("Error al subir: " + error.message);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function borrarProyecto(id) {
+            if(confirm("¿Borrar foto permanentemente?")) {
+                const { error } = await supabase.from('proyectos').delete().eq('id', id);
+                if(!error) cargarProyectos();
+            }
+        }
+
+        // --- 4. SISTEMA ADMIN ---
+        function openLogin() { 
+            document.getElementById('loginModal').style.display='flex';
+            if(!supabase) {
+                const status = document.getElementById('dbStatus');
+                status.style.display = 'block';
+                status.innerText = "⚠️ Base de datos desconectada. Solo edición local.";
+            }
+        }
+        
+        function checkPin() {
+            const input = document.getElementById('pinInput').value;
+            // Usamos btoa para comparar con el hash (seguridad básica para evitar leerlo a simple vista)
+            if(btoa(input) === SECRET_HASH) {
+                isAdmin = true;
+                document.getElementById('loginModal').style.display='none';
+                document.getElementById('adminBar').style.display='flex';
+                document.getElementById('btnAddProject').style.display='flex';
+                
+                // Mostrar herramientas admin
+                document.querySelectorAll('.delete-btn').forEach(b => b.style.display='block');
+                
+                // Habilitar edición de links redes sociales
+                document.getElementById('btnFacebook').onclick = function(e) { 
+                    e.preventDefault(); 
+                    let url = prompt("Nuevo enlace Facebook:", this.href);
+                    if(url) { this.href=url; localStorage.setItem('fb_link', url); }
+                };
+                document.getElementById('btnInstagram').onclick = function(e) { 
+                    e.preventDefault(); 
+                    let url = prompt("Nuevo enlace Instagram:", this.href);
+                    if(url) { this.href=url; localStorage.setItem('ig_link', url); }
+                };
+                
+                alert("MODO ADMIN ACTIVO\n- Sube fotos en 'Proyectos'.\n- Haz clic en Facebook/Instagram para cambiar el enlace.");
+
+            } else { alert("PIN Incorrecto"); }
+        }
+
+        function exitAdmin() {
+            isAdmin = false;
+            document.getElementById('adminBar').style.display='none';
+            document.getElementById('btnAddProject').style.display='none';
+            document.querySelectorAll('.delete-btn').forEach(b => b.style.display='none');
+            // Quitar eventos clic redes
+            document.getElementById('btnFacebook').onclick = null;
+            document.getElementById('btnInstagram').onclick = null;
+        }
+
+        // --- 5. ROBOT WHATSAPP ---
+        function sendWhatsapp() {
+            const txt = document.getElementById('chatInput').value;
+            if(txt) window.open(`https://wa.me/34644671008?text=${encodeURIComponent(txt)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
