@@ -11,8 +11,8 @@
     <style>
         /* --- ESTILOS GENERALES --- */
         :root {
-            --primary: #003366;
-            --accent: #28a745;
+            --primary: #003366; /* Azul oscuro corporativo */
+            --accent: #28a745;  /* Verde energía */
             --white-glass: rgba(255, 255, 255, 0.96);
             --text-dark: #333;
             --facebook: #1877F2;
@@ -20,8 +20,13 @@
         }
 
         body {
-            background: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed; 
-            background-size: cover; color: var(--text-dark); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 0;
+            /* Fondo azul cielo con paneles solares */
+            background: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed; 
+            background-size: cover; 
+            background-color: #f0f8ff; /* Color de respaldo por si falla la imagen */
+            color: var(--text-dark); 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; padding: 0;
         }
 
         * { box-sizing: border-box; } a { text-decoration: none; color: inherit; transition: 0.3s; }
@@ -29,21 +34,28 @@
 
         /* HEADER */
         header { background: rgba(255, 255, 255, 0.98); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 5%; max-width: 1200px; margin: 0 auto; }
-        .logo img { height: 60px; width: auto; display: block; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 5%; max-width: 1200px; margin: 0 auto; }
+        
+        /* LOGO AJUSTADO */
+        .logo img { height: 70px; width: auto; display: block; object-fit: contain; }
+        
         nav ul { display: flex; gap: 2rem; }
         nav a { font-weight: 600; color: var(--primary); text-transform: uppercase; font-size: 0.9rem; }
+        nav a:hover { color: var(--accent); }
         .btn-cta { background: var(--accent); color: white; padding: 0.6rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; border: none; }
 
         /* HERO & SECCIONES */
-        .hero-spacer { height: 80px; }
-        .hero-section { text-align: center; padding: 8rem 2rem; background: rgba(0, 51, 102, 0.9); color: white; margin-bottom: 4rem; }
-        .hero-section h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+        .hero-spacer { height: 90px; }
+        .hero-section { text-align: center; padding: 8rem 2rem; background: linear-gradient(rgba(0, 51, 102, 0.8), rgba(0, 51, 102, 0.9)); color: white; margin-bottom: 4rem; }
+        .hero-section h1 { font-size: 3.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         
         section { background: var(--white-glass); margin: 4rem auto; padding: 4rem 5%; max-width: 1100px; border-radius: 15px; backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .section-title { text-align: center; margin-bottom: 3rem; }
         .section-title h2 { color: var(--primary); font-size: 2.2rem; }
         .section-title::after { content: ''; display: block; width: 60px; height: 3px; background: var(--accent); margin: 10px auto; }
+
+        /* SOBRE NOSOTROS TEXTO */
+        .about-text { font-size: 1.1rem; line-height: 1.8; text-align: center; color: #555; max-width: 800px; margin: 0 auto; }
 
         /* GALERÍA PROYECTOS */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
@@ -56,25 +68,29 @@
 
         /* RESEÑAS */
         .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-        .review-card { background: white; padding: 1.5rem; border-radius: 8px; border-left: 5px solid var(--accent); }
+        .review-card { background: white; padding: 1.5rem; border-radius: 8px; border-left: 5px solid var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .stars { color: #FFD700; margin-bottom: 10px; }
         .review-form { background: #f4f4f4; padding: 2rem; border-radius: 10px; max-width: 600px; margin: 0 auto; }
         .form-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 1rem; }
 
         /* FOOTER */
-        footer { background: #1a1a1a; color: #ddd; padding: 4rem 5% 6rem; margin-top: 4rem; position: relative; z-index: 10; }
+        footer { background: #1a1a1a; color: #ddd; padding: 4rem 5% 2rem; margin-top: 4rem; position: relative; z-index: 10; }
         .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto; gap: 2rem; }
-        .footer-col h4 { color: white; border-left: 3px solid var(--accent); padding-left: 10px; margin-bottom: 1.5rem; }
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h4 { color: white; border-left: 3px solid var(--accent); padding-left: 10px; margin-bottom: 1.5rem; font-size: 1.2rem; }
+        .footer-col p { margin-bottom: 0.8rem; display: flex; align-items: center; gap: 10px; }
+        
         .social-row { display: flex; gap: 15px; margin-top: 15px; }
         .social-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; transition: transform 0.3s; }
         .social-btn:hover { transform: translateY(-5px); }
         .fb { background: var(--facebook); } .ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        
         .credits { text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #333; font-size: 0.9rem; opacity: 0.8; }
+        .movinet-credit { color: var(--accent); font-weight: bold; font-size: 1rem; display: block; margin-top: 10px; letter-spacing: 0.5px; }
 
         /* BOTÓN ADMIN */
         #btnAdminTrigger {
-            background-color: #333; color: #aaa; border: 1px solid #555; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 14px;
-            /* Asegura que esté por encima de todo */
+            background-color: #333; color: #aaa; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 12px;
             position: relative; z-index: 2000;
         }
         #btnAdminTrigger:hover { background: #444; color: white; }
@@ -82,7 +98,6 @@
         /* MODAL Y ADMIN BAR */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 99999; align-items: center; justify-content: center; }
         .modal-inner { background: white; padding: 2rem; border-radius: 10px; width: 300px; text-align: center; }
-        
         .admin-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #222; color: white; padding: 10px 25px; border-radius: 50px; display: none; align-items: center; gap: 15px; z-index: 99999; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
         
         /* ROBOT */
@@ -94,17 +109,20 @@
         .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s infinite; margin-left: 10px; display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        @media(max-width:768px) { nav { display: none; } .hero-section h1 { font-size: 2.5rem; } }
+        @media(max-width:768px) { nav { display: none; } .hero-section h1 { font-size: 2.5rem; } .footer-content { flex-direction: column; } }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-container">
-            <div class="logo"><img src="logo.jpeg" alt="Renovasur" id="siteLogo" onerror="this.style.display='none'"></div>
+            <div class="logo">
+                <img src="logo.jpeg" alt="Renovasur Logo">
+            </div>
             <nav>
                 <ul>
                     <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
                     <li><a href="#proyectos">Proyectos</a></li>
                     <li><a href="#opiniones">Reseñas</a></li>
                 </ul>
@@ -117,14 +135,26 @@
 
     <div class="hero-section" id="inicio">
         <h1>Energía Limpia, Futuro Seguro</h1>
-        <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto 2rem;">Líderes en instalación de placas solares y eficiencia energética.</p>
-        <a href="#contacto" class="btn-cta" style="background:white; color:var(--primary);">Solicitar Estudio</a>
+        <p style="font-size: 1.3rem; max-width: 800px; margin: 0 auto 2rem;">Líderes en instalación de placas solares y eficiencia energética en Sanlúcar.</p>
+        <a href="#contacto" class="btn-cta" style="background:white; color:var(--primary);">Solicitar Estudio Gratuito</a>
     </div>
+
+    <section id="nosotros">
+        <div class="section-title">
+            <h2>Sobre Nosotros</h2>
+            <p>Compromiso con la calidad y el medio ambiente</p>
+        </div>
+        <div class="about-text">
+            <p>En <strong>Renovasur</strong>, somos especialistas en llevar la energía solar a tu hogar o negocio. Con años de experiencia en el sector, nuestro equipo se encarga de todo el proceso: desde el estudio previo hasta la instalación y legalización.</p>
+            <br>
+            <p>Nos ubicamos en Sanlúcar de Barrameda y trabajamos con los mejores materiales del mercado para garantizar el máximo rendimiento de tu instalación fotovoltaica.</p>
+        </div>
+    </section>
 
     <section id="proyectos">
         <div class="section-title">
             <h2>Nuestros Proyectos</h2>
-            <p>Trabajos reales guardados en la nube.</p>
+            <p>Instalaciones reales realizadas por nuestro equipo.</p>
         </div>
         <div class="gallery-grid" id="galleryContainer">
             <div class="gallery-item add-card" id="btnAddProject" onclick="abrirSelectorFoto()">
@@ -150,7 +180,7 @@
         <div class="review-form">
             <h3 style="margin-bottom:1rem;">Deja tu opinión</h3>
             <input type="text" id="reviewName" class="form-input" placeholder="Tu Nombre">
-            <textarea id="reviewText" class="form-input" rows="3" placeholder="Tu experiencia..."></textarea>
+            <textarea id="reviewText" class="form-input" rows="3" placeholder="Tu experiencia con Renovasur..."></textarea>
             <select id="reviewStars" class="form-input">
                 <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
                 <option value="4">⭐⭐⭐⭐ Muy Bien</option>
@@ -166,11 +196,20 @@
         <div class="footer-content">
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>Sanlúcar de Barrameda</p>
-                <p>644 671 008</p>
+                <p><i class="fas fa-map-marker-alt" style="color:var(--accent)"></i> Sanlúcar de Barrameda</p>
+                <p><i class="fas fa-phone-alt" style="color:var(--accent)"></i> 644 671 008</p>
+                <p><i class="fas fa-envelope" style="color:var(--accent)"></i> info@renovasur.com</p>
             </div>
+            
             <div class="footer-col">
-                <h4>Redes Sociales</h4>
+                <h4>Horario</h4>
+                <p><i class="far fa-clock" style="color:var(--accent)"></i> Lunes - Viernes</p>
+                <p style="padding-left: 25px;">09:00 - 14:00</p>
+                <p style="padding-left: 25px;">16:00 - 19:00</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Síguenos</h4>
                 <div class="social-row">
                     <a href="https://facebook.com" target="_blank" class="social-btn fb" id="btnFacebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="https://instagram.com" target="_blank" class="social-btn ig" id="btnInstagram"><i class="fab fa-instagram"></i></a>
@@ -179,7 +218,8 @@
         </div>
         
         <div class="credits">
-            <p>Renovasur &copy; 2024.</p>
+            <p>Renovasur &copy; 2024. Todos los derechos reservados.</p>
+            <span class="movinet-credit">Web creada por movinetconde</span>
             <br>
             <button id="btnAdminTrigger" onclick="abrirLogin()">🔒 Acceso Admin</button>
         </div>
@@ -188,7 +228,7 @@
     <div class="robot-container">
         <div class="chat-box" id="chatBox">
             <p>🤖 <strong>Asistente Renovasur</strong></p>
-            <p style="font-size:0.9rem; margin:10px 0;">¿Dudas? Escríbenos.</p>
+            <p style="font-size:0.9rem; margin:10px 0;">Hola, ¿en qué podemos ayudarte con tu instalación solar?</p>
             <input type="text" id="chatInput" style="width:100%; padding:8px; border:1px solid #ccc; margin-bottom:10px;" placeholder="Tu consulta...">
             <button onclick="sendWhatsapp()" style="width:100%; background:var(--primary); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">Enviar WhatsApp</button>
         </div>
@@ -216,19 +256,17 @@
 
     <script>
         // ==========================================
-        // 1. VARIABLES GLOBALES (Siempre disponibles)
+        // VARIABLES GLOBALES
         // ==========================================
         let supabaseClient = null;
         let isAdmin = false;
 
-        // --- DATOS DE CONEXIÓN ---
-        // ¡IMPORTANTE! Asegúrate de que estos datos son exactos a los de tu Supabase
+        // DATOS DE CONEXIÓN
         const SUPABASE_URL = 'https://qykzkxrpdsbojrnvdeai.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_wn8UY8Kdqr19nl5wgi7_pg_bWdD6tsq'; // Nota: Esta clave parece cortada o extraña, revisa si es la correcta.
+        const SUPABASE_KEY = 'sb_publishable_wn8UY8Kdqr19nl5wgi7_pg_bWdD6tsq'; 
 
         // ==========================================
-        // 2. FUNCIONES DE INTERFAZ (BOTONES Y CHAT)
-        // Estas funcionan aunque falle la base de datos
+        // FUNCIONES DE INTERFAZ
         // ==========================================
 
         function abrirLogin() {
@@ -259,10 +297,8 @@
             document.getElementById('btnAddProject').style.display = 'flex';
             document.getElementById('btnAdminTrigger').style.display = 'none';
             
-            // Mostrar botones borrar si ya hay proyectos cargados
             document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'block');
             
-            // Habilitar edición de links
             habilitarEdicionLinks();
             alert("✅ MODO ADMIN ACTIVO");
         }
@@ -304,7 +340,7 @@
         }
 
         // ==========================================
-        // 3. INICIALIZACIÓN Y BASE DE DATOS
+        // INICIALIZACIÓN Y BASE DE DATOS
         // ==========================================
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -324,10 +360,8 @@
                 }
             } catch (error) {
                 console.error("Error crítico iniciando Supabase:", error);
-                // No mostramos alerta al usuario para no asustar, pero miramos la consola
             }
 
-            // Listener para subida de fotos
             document.getElementById('galleryUpload').addEventListener('change', subirFoto);
         });
 
@@ -355,7 +389,6 @@
 
         async function guardarResenaSupabase() {
             if(!supabaseClient) return alert("Error: No hay conexión con la base de datos.");
-            
             const nombre = document.getElementById('reviewName').value;
             const texto = document.getElementById('reviewText').value;
             const estrellas = document.getElementById('reviewStars').value;
@@ -363,9 +396,7 @@
             if(!nombre || !texto) return alert("Completa los campos.");
 
             document.getElementById('reviewSpinner').style.display='inline-block';
-            
             const { error } = await supabaseClient.from('resenas').insert([{ nombre, texto, estrellas }]);
-            
             document.getElementById('reviewSpinner').style.display='none';
 
             if(!error) {
@@ -385,7 +416,6 @@
             const container = document.getElementById('galleryContainer');
             const btnAdd = document.getElementById('btnAddProject');
             
-            // Limpiamos contenido pero guardamos el botón
             container.innerHTML = '';
             container.appendChild(btnAdd);
 
@@ -406,8 +436,6 @@
             if(!supabaseClient) return alert("Sin conexión a base de datos");
             const file = e.target.files[0];
             if(!file) return;
-
-            // Limite 1MB para evitar saturar versiones gratuitas
             if(file.size > 1000000) return alert("Imagen demasiado grande. Usa una menor a 1MB.");
 
             const reader = new FileReader();
@@ -416,16 +444,12 @@
                 const { error } = await supabaseClient.from('proyectos').insert([{ imagen_base64: ev.target.result }]);
                 document.getElementById('uploadSpinner').style.display='none';
                 
-                if(!error) {
-                    cargarProyectos();
-                } else {
-                    alert("Error subiendo: " + error.message);
-                }
+                if(!error) cargarProyectos();
+                else alert("Error subiendo: " + error.message);
             };
             reader.readAsDataURL(file);
         }
 
-        // Esta función debe estar disponible globalmente para el onclick del HTML generado dinámicamente
         window.borrarProyecto = async function(id) {
             if(!supabaseClient) return;
             if(confirm("¿Borrar esta foto?")) {
